@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans	
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    ">
+	<!-- annotation based transaction management configuration  -->
+	<tx:annotation-driven />
+
+	<!-- Configure base package scan -->
+	<context:component-scan base-package="com.snnstock.ramzan"/> 
+	
+	<!-- 1 Configure base InternalResources View Resolver -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/views/"/>
+		<property name="suffix" value=".jsp"/>	
+	</bean>
+	
+	<!-- DataSource Bean with 4 Properties -->
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" name="ds">
+		<!-- 1. dirverClassName -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		
+		<!-- 2. url -->
+		<property name="url" value="jdbc:mysql://localhost:3306/snn_usersData"/>
+		
+		<!-- 3. username -->
+		<property name="username" value="root"/>
+		
+		<!-- 4. password -->
+		<property name="password" value="root"/>
+	</bean>
+	
+	<!-- Factory Bean with 3 Properties -->
+	<bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" name="factory">
+		<!-- 1. DataSource Property -->
+		<property name="dataSource" ref="ds"/>
+		
+		<!-- 2. Hibernate property with 3 prop -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>		
+		</property>
+		
+		<!-- 3. Annotated Class -->
+		<property name="annotatedClasses">
+			<list>
+				<value>com.snnstock.ramzan.model.User</value>
+				<value>com.snnstock.ramzan.model.Ports</value>
+			</list>
+		</property>	
+	</bean>	
+	
+	
+	<!-- 2 HibernateTemplate bean with one SessionFactory -->
+	<bean class="org.springframework.orm.hibernate5.HibernateTemplate" name="hibernateTemplate">
+		<property name="sessionFactory" ref="factory"/>
+	</bean>
+	
+	<!-- HibernateTransactionManage Need for write operation with one Property-->
+	<bean class="org.springframework.orm.hibernate5.HibernateTransactionManager" name="transactionManager">
+		<property name="sessionFactory" ref="factory"></property>	
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+</beans>
